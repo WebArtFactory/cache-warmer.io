@@ -1,0 +1,33 @@
+
+
+.nav {
+  display : flex;
+  flex-direction: row;
+  margin-top: 20px;
+  width : 100%;
+  list-style-type : none;
+}
+
+.navbar-brand {
+  margin-right : 700px;
+}
+
+.navbar {
+  padding-right : 30px;
+  padding-top: 30px;
+}
+
+.navcat {
+  display : flex;
+  flex-direction : row;
+}
+
+.logo {
+  width : 100px;
+  /* height : 150px; */
+}
+
+.input {
+  align-content: 'center';
+}
+
