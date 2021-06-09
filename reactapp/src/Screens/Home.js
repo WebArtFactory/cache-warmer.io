@@ -3,10 +3,11 @@ import Navigation from '../Components/Nav';
 // import Style from '../Style.css';
 import socketIOClient from 'socket.io-client';
 
-let socket = socketIOClient("http://192.168.1.190:3000", { transports : ['websocket'] })
+
+let socket = socketIOClient("http://127.0.0.1:3000", { transports : ['websocket'] })
+// let socket = socketIOClient("http://51.210.100.11:3000", { transports : ['websocket'] })
 
 function Home() {
-
     const [url, setUrl] = useState("");
     const [urlResultList, setUrlResultList] = useState([]);
 
