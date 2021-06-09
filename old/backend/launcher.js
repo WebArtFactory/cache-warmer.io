@@ -42,8 +42,8 @@ process.argv.forEach(element => {
 
 
 var endCrawl = () => {
-    console.log('Crawler complete');
-    return process.exit(0);
+    // console.log('Crawler complete');
+    // return process.exit(0);
 };
 
 crawler.run(config, endCrawl);

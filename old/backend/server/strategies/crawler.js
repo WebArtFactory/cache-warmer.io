@@ -45,6 +45,7 @@ module.exports = {
         console.log('On ouvre la page : ' + pagesitemap);
 
         // @todo : lire le fichier XML "pagesitemap" et récupérer les URLs qu'il contient
+        console.log(pagesitemap);
         request.get(
             pagesitemap,
             function (error, response, body) {
@@ -65,19 +66,12 @@ module.exports = {
                         console.log(err);
                         process.exit(1);
                     }
-                    // console.log(result.urlset.url);
-                    // result.urlset.url.forEach(url => {
-                    //     // console.log(url.loc);
-                    // })
 
                     if (typeof result.urlset == 'undefined') {
-                        // console.log(result.sitemapindex.sitemap)
                         result.sitemapindex.sitemap.forEach(element => {
-                            console.log(element);
-                            _this.navigateSiteMap(element.loc, callback);
-
+                            // console.log(element);
+                            _this.navigateSiteMap(element.loc[0], callback);
                         });
-                        // _this.navigateUrls(result.sitemapindex.url, callback)
                     } else {
                         _this.navigateUrls(result.urlset.url, callback)
                     }
@@ -96,14 +90,12 @@ module.exports = {
         var _this = this;
         var now = new Date();
 
-
         url = url.loc[0];
 
         request.get(
             url,
             function (error, response, body) {
                 var data = url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss') + '\n';
-                // console.log(error);
                 // console.log(error);
                 // console.log(response);
                 console.log(data);
