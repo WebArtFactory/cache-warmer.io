@@ -4,6 +4,9 @@ import Navigation from '../Components/Nav';
 import socketIOClient from 'socket.io-client';
 
 
+/**
+ * @todo Rajouter l'appel à un paramètre process.env.PORT
+ */
 let socket = socketIOClient("http://127.0.0.1:3000", { transports : ['websocket'] })
 // let socket = socketIOClient("http://51.210.100.11:3000", { transports : ['websocket'] })
 
