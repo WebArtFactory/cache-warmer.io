@@ -9,7 +9,7 @@ function Navigation() {
     return (
         <div>
             <div className="row">
-                <Navbar style={Style.nav} expand="lg">
+                <Navbar className="nav" expand="lg">
                     <div className="col-md-6">
                         <span className="navbar-brand">
                             <img src="./images/logo.jpg" className="logo" alt="logo" />
