@@ -1,6 +1,6 @@
 const request = require('request'),
     crypto = require('crypto'),
-    libxmljs = require("libxmljs"),
+    // libxmljs = require("libxmljs"),
 
     STATUS_INIT = 'initializing',
     STATUS_ON = 'on',

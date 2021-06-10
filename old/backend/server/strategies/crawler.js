@@ -2,14 +2,16 @@ const _parent = require('./abstract.js');
 const request = require('request');
 const date = require('date-and-time');
 const fs = require('fs');
+const xml2js = require('xml2js');
 /**
  * @type {{run: module.exports.run, getCellValue: module.exports.getCellValue}}
  */
-module.exports = {
+return module.exports = {
     /**
      * Varibales
      */
     app: null,
+    socket: null,
     name: 'Crawler Web',
 
     /**
@@ -26,11 +28,15 @@ module.exports = {
      *
      * @return void
      */
-    run: function (config, callback) {
+    run: function (config, socket, callback) {
         fs.truncateSync('var/log/urls.txt', 0);
 
-        var pagesitemap = config['sitemap_url'];
+        this.socket = socket;
+
+        var pagesitemap = config['url'];
         this.navigateSiteMap(pagesitemap, callback);
+
+        return '@todo'
     },
 
     /**
@@ -57,11 +63,8 @@ module.exports = {
 
                 console.log('Page ouverte.');
                 // console.log(body);
-                // @todo : parcourire une fois chaque URL récupérée dans le sitemap
 
-                var parseString = require('xml2js').parseString;
-                var xml = body
-                parseString(xml, function (err, result) {
+                xml2js.parseString(body, function (err, result) {
                     if (typeof result == 'undefined' || err) {
                         console.log(err);
                         process.exit(1);
@@ -99,11 +102,16 @@ module.exports = {
                 // console.log(error);
                 // console.log(response);
                 console.log(data);
+                _this.socket.emit('urlFromBack', {data})
+                // console.log('emission ok');
+
                 fs.appendFileSync('var/log/urls.txt', data);
                 if (urlList.length > 0) {
                     _this.navigateUrls(urlList, callback);
                 } else if (callback) {
                     callback();
+                    process.exit(1);
+
                 }
             }
         );

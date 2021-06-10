@@ -3,10 +3,14 @@
 /**
  * Module dependencies.
  */
+const crawler = require('../old/backend/server/strategies/crawler.js');
 
 var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
+
+
+
 
 /**
  * Get port from environment and store in Express.
@@ -23,13 +27,23 @@ var server = http.createServer(app);
 
 let io = require('socket.io')(server);
 
-io.on('connection', function(socket) {
-  // console.log('url reçue', socket)
-  socket.on('urlFromFront', function(url) {
+io.on('connection', function (socket) {
+  socket.on('urlFromFront', function (url) {
     console.log('url', url)
-    socket.emit('urlFromBack', url)
-  })
-})
+    let config = {
+      url
+    };
+    var endCrawl = () => {
+      console.log('Crawler complete');
+      // return process.exit(0);
+    };
+    
+    let result = crawler.run(config, socket, endCrawl);
+    console.log('config', config)
+   
+      // socket.emit('urlFromBack', {url : config, endCrawl})
+    }
+)})
 
 /**
  * Listen on provided port, on all network interfaces.

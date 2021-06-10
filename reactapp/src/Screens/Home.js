@@ -17,8 +17,9 @@ function Home() {
 
     useEffect(() => {
         socket.on('urlFromBack', (newUrlResult) => {
-            console.log('newResult', newUrlResult)
-            setUrlResultList([...urlResultList, newUrlResult]);
+            console.log('newResult', newUrlResult.data)
+            // setUrlResultList([...urlResultList, newUrlResult]);
+            console.log('resultback', urlResultList)
         });
     }, [urlResultList]);
 

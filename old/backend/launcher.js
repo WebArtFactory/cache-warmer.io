@@ -42,7 +42,7 @@ process.argv.forEach(element => {
 
 
 var endCrawl = () => {
-    // console.log('Crawler complete');
+    console.log('Crawler complete');
     // return process.exit(0);
 };
 
