@@ -30,11 +30,12 @@ return module.exports = {
      */
     run: function (config, socket, callback) {
         fs.truncateSync('var/log/urls.txt', 0);
-
         this.socket = socket;
 
         var pagesitemap = config['url'];
-        this.navigateSiteMap(pagesitemap, callback);
+
+            this.navigateSiteMap(pagesitemap, callback);
+
 
         return '@todo'
     },
@@ -57,24 +58,28 @@ return module.exports = {
             function (error, response, body) {
                 if (typeof body == 'undefined' || error) {
                     console.log('error while opening sitemap');
-                    console.log(error);
+                    // console.log(error);
                     process.exit(1);
                 }
 
-                console.log('Page ouverte.');
+                // console.log('Page ouverte.');
                 // console.log(body);
 
-                xml2js.parseString(body, function (err, result) {
+                xml2js.parseString(body, async function (err, result) {
                     if (typeof result == 'undefined' || err) {
                         console.log(err);
                         process.exit(1);
                     }
 
                     if (typeof result.urlset == 'undefined') {
-                        result.sitemapindex.sitemap.forEach(element => {
-                            // console.log(element);
-                            _this.navigateSiteMap(element.loc[0], callback);
-                        });
+                            for (element of result.sitemapindex.sitemap) {
+
+                                console.log('sitemap', element.loc);
+                                _this.navigateSiteMap(element.loc[0], callback)
+                            }
+                            // result.sitemapindex.sitemap.forEach(element => {
+
+                            // });
                     } else {
                         _this.navigateUrls(result.urlset.url, callback)
                     }
@@ -101,8 +106,8 @@ return module.exports = {
                 var data = url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss') + '\n';
                 // console.log(error);
                 // console.log(response);
-                console.log(data);
-                _this.socket.emit('urlFromBack', {data})
+                console.log('data', data);
+                _this.socket.emit('urlFromBack', data)
                 // console.log('emission ok');
 
                 fs.appendFileSync('var/log/urls.txt', data);
@@ -110,8 +115,6 @@ return module.exports = {
                     _this.navigateUrls(urlList, callback);
                 } else if (callback) {
                     callback();
-                    process.exit(1);
-
                 }
             }
         );

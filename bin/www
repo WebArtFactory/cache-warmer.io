@@ -37,13 +37,14 @@ io.on('connection', function (socket) {
       console.log('Crawler complete');
       // return process.exit(0);
     };
-    
-    let result = crawler.run(config, socket, endCrawl);
+
+    crawler.run(config, socket, endCrawl);
     console.log('config', config)
-   
-      // socket.emit('urlFromBack', {url : config, endCrawl})
-    }
-)})
+
+    // socket.emit('urlFromBack', {url : config, endCrawl})
+  }
+  )
+})
 
 /**
  * Listen on provided port, on all network interfaces.
