@@ -1,5 +1,7 @@
-const _parent = require('./abstract.js');
-const request = require('request');
+const _parent = require('./abstract.js'),
+    request = require('request');
+const requestPromise = require('request-promise');
+
 const date = require('date-and-time');
 const fs = require('fs');
 const xml2js = require('xml2js');
@@ -14,6 +16,8 @@ return module.exports = {
     socket: null,
     name: 'Crawler Web',
     current: 0,
+    limitPerSitemap: 50000000,
+
 
     /**
      * Init. function
@@ -48,103 +52,35 @@ return module.exports = {
      *
     //  * Make the difference with the Urlset and sitemapindex
     //  */
-    // navigateSiteMap: function (pagesitemap, callback) {
-    //     var _this = this;
-    //     console.log('On ouvre la page : ' + pagesitemap);
-
-    //     // @todo : lire le fichier XML "pagesitemap" et récupérer les URLs qu'il contient
-    //     // console.log(pagesitemap);
-    //     request.get(
-    //         pagesitemap,
-    //         function (error, response, body) {
-    //             if (typeof body == 'undefined' || error) {
-    //                 // console.log('error while opening sitemap');
-    //                 // console.log(error);
-    //                 process.exit(1);
-    //             }
-
-    //             // console.log('Page ouverte.');
-    //             // console.log(body);
-
-    //             xml2js.parseString(body, async function (err, result) {
-    //                 if (typeof result == 'undefined' || err) {
-    //                     // console.log(err);
-    //                     process.exit(1);
-    //                 }
-
-    //                 if (typeof result.urlset == 'undefined') {
-    //                         for (element of result.sitemapindex.sitemap) {
-
-    //                             console.log('element loc', element.loc);
-    //                             _this.navigateSiteMap(element.loc[0], callback)
-    //                         }
-    //                         // result.sitemapindex.sitemap.forEach(element => {
-
-    //                         // });
-    //                 } else {
-    //                     _this.navigateUrls(result.urlset.url, callback)
-    //                 }
-    //             });
-
-    //         }
-    //     );
-    // },
-
     navigateSiteMap: async function (pagesitemap) {
         var _this = this;
-        // console.log('On ouvre la page : ' + pagesitemap);
-        request.get(
-            pagesitemap,
-            function (error, response, body) {
-                if (typeof body == 'undefined' || error) {
-                    process.exit(1);
-                }
+        let result;
 
-                xml2js.parseString(body, async function (err, result) {
-                    if (typeof result == 'undefined' || err) {
+        try {
+            let body = await requestPromise(pagesitemap);
+            // console.log('body', body);
+            result = await xml2js.parseStringPromise(body)
+            console.log('result', result)
+        } catch (err) {
+            console.log('err', err);
+            process.exit(1);
+        }
 
-                        process.exit(1);
-                    }
-
-                    if (typeof result.urlset == 'undefined') {
-                        let resultUrl = [];
-                        for (let element of result.sitemapindex.sitemap) {
-                            // console.log('element loc', element.loc);
-                            // console.log('element', element);
-                            const result = await element.loc
-                            console.log('result', result)
-                            await resultUrl.push(result)
-
-                        }
-                        console.log('tableauurlresult', resultUrl)
-                        // let el1 = await _this.navigateSiteMap(resultUrl)
-                        for (let url of resultUrl) {
-                            console.log('tabel', url)
-                            let el1 = _this.navigateSiteMap(url[0])
-                            // let el2 = await el1
-
-                            // const element1 = await el1
-                            console.log('el1', el1)
-                            // console.log('el2', el2)
-                        }
-                        // result.sitemapindex.sitemap.forEach(element => {
-
-                        // });
-                    } else {
-                        _this.current = 0;
-                        _this.navigateUrls(result.urlset.url)
-                    }
-                });
-
+        let el1;
+        if (typeof result.urlset == 'undefined') {
+            for (let element of result.sitemapindex.sitemap) {
+                console.log('On commence à parcourir le sitemap : ' + element.loc[0])
+                await _this.navigateSiteMap(element.loc[0])
+                // console.log('el1', el1)
             }
-        );
+        } else {
+            console.log('On commence à parcourir les URLs du sitemap.')
+            _this.current = 0;
+            await _this.navigateUrls(result.urlset.url)
+        }
     },
 
-
-    /**
-     * Allow the crawler to navigate
-     */
-    navigateUrls: function (urlList, callback) {
+    navigateUrls: async function (urlList, response) {
 
 
         var url = urlList.shift();
@@ -154,25 +90,24 @@ return module.exports = {
 
         url = url.loc[0];
 
-        request.get(
-            url,
-            function (error, response, body) {
-                var data = url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss') + '\n';
-                // console.log(error);
-                // console.log(response);
-                // console.log('data', data);
-                _this.socket.emit('urlFromBack', data)
-                // console.log('emission ok');
-
-                fs.appendFileSync('var/log/urls.txt', data);
-                if (urlList.length > 0 && _this.current < 5) {
-                    _this.navigateUrls(urlList, callback);
-                } else if (callback) {
-                    callback();
-                }
+        try {
+            let response = await requestPromise({
+                uri: url,
+                resolveWithFullResponse: true
+            });
+            console.log('response', response.statusCode)
+            let data = await url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss') + '\n';
+            console.log('data', data)
+            await _this.socket.emit('urlFromBack', data)
+            await fs.appendFileSync('var/log/urls.txt', data);
+            if (urlList.length > 0 && _this.current < _this.limitPerSitemap) {
+                await _this.navigateUrls(urlList);
             }
-        );
+        }
+        catch (err) {
+            console.log('err', err);
 
+        }
     },
 
     /**
