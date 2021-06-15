@@ -39,7 +39,7 @@ io.on('connection', function (socket) {
     };
 
     crawler.run(config, socket, endCrawl);
-    console.log('config', config)
+    // console.log('config', config)
 
     // socket.emit('urlFromBack', {url : config, endCrawl})
   }

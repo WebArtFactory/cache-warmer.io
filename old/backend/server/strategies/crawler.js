@@ -16,7 +16,7 @@ return module.exports = {
     socket: null,
     name: 'Crawler Web',
     current: 0,
-    limitPerSitemap: 50000000,
+    limitPerSitemap: 3,
 
 
     /**
@@ -33,13 +33,13 @@ return module.exports = {
      *
      * @return void
      */
-    run: function (config, socket, callback) {
-        fs.truncateSync('var/log/urls.txt', 0);
-        this.socket = socket;
+    run: async function (config, socket, callback) {
+        await fs.truncateSync('var/log/urls.txt', 0);
+        this.socket = await socket;
 
-        var pagesitemap = config['url'];
+        var pagesitemap = await config['url'];
 
-        this.navigateSiteMap(pagesitemap, callback);
+        await this.navigateSiteMap(pagesitemap);
 
 
         return '@todo'
@@ -96,7 +96,7 @@ return module.exports = {
                 resolveWithFullResponse: true
             });
             console.log('response', response.statusCode)
-            let data = await url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss') + '\n';
+            let data = await url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
             await _this.socket.emit('urlFromBack', data)
             await fs.appendFileSync('var/log/urls.txt', data);

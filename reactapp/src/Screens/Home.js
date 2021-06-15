@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Table } from 'reactstrap';
 import Navigation from '../Components/Nav';
 // import Style from '../Style.css';
 import socketIOClient from 'socket.io-client';
@@ -16,43 +17,39 @@ function Home() {
     const [urlResultList, setUrlResultList] = useState([]);
     console.log('______________URLRESULT1', urlResultList)
 
-    let result = []
+    // let result = []
 
-    
     useEffect(() => {
-        
-        socket.on('urlFromBack', (newUrlResult) => {
-            console.log('okay', newUrlResult)
-            // result.push(newUrlResult)
-            // console.log('result', result)
-         
-            // console.log('newResult', newUrlResult)
-            // result.push(newUrlResult)
-            // console.log('result1', result)
-            // setUrlResultList(result)
-            // console.log('------------------URLRESULLIST', urlResultList)
-            // console.log('url1', urlResultList)
-        //     for (let i = 0; i < urlResultList.length; i++) {
-                
-        //         if (urlResultList.length===0) {
-        //             result.push(newUrlResult)
-        //             setUrlResultList(result)
-        //             console.log('1', urlResultList)
-        //         } else {
-        //             setUrlResultList([...urlResultList, newUrlResult])
-        //             console.log('2', urlResultList)
 
-        //         }
-        // }
-        // setUrlResultList([result])
-        setUrlResultList([...urlResultList, newUrlResult])
-    }
-    )
-    },[]);
-    
-    let urlResultItem = urlResultList.map((url, i) => {
+        socket.on('urlFromBack', (newUrlResult) => {
+            console.log('useeffect rechargemetn')
+            console.log('okay', newUrlResult)
+            setUrlResultList([...urlResultList, newUrlResult]);
+            console.log('______________URLRESULT2', urlResultList)
+        }
+        )
+    }, [urlResultList]);
+
+
+    let urlResultItem = urlResultList.map((element, i) => {
+        let newFormat = element.split([","])
+        console.log('newformat', newFormat)
+        let newFormatDate = newFormat[2].split([" "])
+        console.log('date', newFormatDate)
+        let date = newFormatDate[1]
+        let hours = newFormatDate[2]
+        let url = newFormat[0]
+        let code = newFormat[1]
+        
         return (
-            <p key={i}>{url}</p>
+            // <p key={i}>{url}</p>
+            <tr>
+                <td>{url}</td>
+                <td>{date}</td>
+                <td>{hours}</td>
+                <td>{code}</td>
+            </tr>
+
         )
     })
 
@@ -79,7 +76,20 @@ function Home() {
                 </div>
             </div>
             <div>
-                {urlResultItem}
+                <Table className="table">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Date</th>
+                            <th>Heure</th>
+                            <th>Code réponse HTTP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {urlResultItem}
+                    </tbody>
+                </Table>
+
             </div>
 
         </div>

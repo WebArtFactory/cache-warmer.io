@@ -17,7 +17,7 @@ function Navigation() {
                     </div>
                     <div className="col-md-6 navcat">
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Category 1</NavLink>
+                            <NavLink style={{ color: 'black' }} href='#'>Accueil</NavLink>
                         </NavItem>
 
                         <NavItem className="navbar">
