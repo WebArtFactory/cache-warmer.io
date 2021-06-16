@@ -96,7 +96,9 @@ return module.exports = {
                 resolveWithFullResponse: true
             });
             console.log('response', response.statusCode)
-            let data = await url + "," + response.statusCode + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
+            let code = response.statusCode;
+            code = parseInt(((Math.random(4)*5)+2)*100)
+            let data = await url + "," + code + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
             await _this.socket.emit('urlFromBack', data)
             await fs.appendFileSync('var/log/urls.txt', data);
