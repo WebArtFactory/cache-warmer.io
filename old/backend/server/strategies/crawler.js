@@ -13,10 +13,11 @@ return module.exports = {
      * Varibales
      */
     app: null,
+    totalEntries: 0,
     socket: null,
     name: 'Crawler Web',
     current: 0,
-    limitPerSitemap: 3,
+    limitPerSitemap: 500000000,
 
 
     /**
@@ -37,12 +38,52 @@ return module.exports = {
         await fs.truncateSync('var/log/urls.txt', 0);
         this.socket = await socket;
 
-        var pagesitemap = await config['url'];
+        var pagesitemap = await config['url'],
+            totalCount;
+
+        await this.countUrls(pagesitemap);
+
+        console.log(this.totalEntries)
 
         await this.navigateSiteMap(pagesitemap);
 
-
         return '@todo'
+    },
+
+    /**
+     *
+     * @param pagesitemap
+     * @param callback
+     *
+    //  * Make the difference with the Urlset and sitemapindex
+    //  */
+    countUrls: async function (pagesitemap) {
+        var _this = this;
+        let result;
+
+        try {
+            let body = await requestPromise(pagesitemap);
+            // console.log('body', body);
+            result = await xml2js.parseStringPromise(body)
+            console.log('result', result)
+        } catch (err) {
+            console.log('err', err);
+            process.exit(1);
+        }
+
+        let el1;
+        if (typeof result.urlset == 'undefined') {
+            for (let element of result.sitemapindex.sitemap) {
+                console.log('On commence à parcourir le sitemap : ' + element.loc[0])
+                await _this.countUrls(element.loc[0])
+                // console.log('el1', el1)
+            }
+        } else {
+            _this.totalEntries += result.urlset.url.length;
+            console.log('count de 1 sitemap : ' + result.urlset.url.length)
+            await _this.socket.emit('countFromBack', _this.totalEntries)
+
+        }
     },
 
     /**
@@ -60,7 +101,7 @@ return module.exports = {
             let body = await requestPromise(pagesitemap);
             // console.log('body', body);
             result = await xml2js.parseStringPromise(body)
-            console.log('result', result)
+            // console.log('result', result)
         } catch (err) {
             console.log('err', err);
             process.exit(1);
@@ -97,7 +138,6 @@ return module.exports = {
             });
             console.log('response', response.statusCode)
             let code = response.statusCode;
-            code = parseInt(((Math.random(4)*5)+2)*100)
             let data = await url + "," + code + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
             await _this.socket.emit('urlFromBack', data)
