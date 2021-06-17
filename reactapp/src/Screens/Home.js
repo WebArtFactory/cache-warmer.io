@@ -3,7 +3,6 @@ import { Table } from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Navigation from '../Components/Nav';
-// import Style from '../Style.css';
 import socketIOClient from 'socket.io-client';
 
 
@@ -18,7 +17,7 @@ function Home() {
     const [url, setUrl] = useState("");
     const [urlResultList, setUrlResultList] = useState([]);
     // console.log('______________URLRESULT1', urlResultList)
-    const [checked, setChecked] = React.useState({
+    const [checked, setChecked] = useState({
         checkedA: true,
         checkedB: true,
         checkedC: true,
@@ -27,60 +26,77 @@ function Home() {
     const [checkCode, setCheckCode] = useState([]);
     const [checkName, setCheckName] = useState("");
     const [checkStatus, setCheckStatus] = useState(true);
+    console.log('checked0', checked)
+
 
     let code;
     // let checkBoxCode;
     let checkBoxName;
     let checkBoxStatus;
-    // console.log('statudepart', checkBoxStatus)
+    let isChecked;
 
 
     useEffect(() => {
 
-        socket.on('urlFromBack', (newUrlResult) => {
-            // console.log('useeffect rechargemetn')
-            // console.log('okay', newUrlResult)
+        socket.on('urlFromBack', (newUrlResult) => {  
             setUrlResultList([...urlResultList, newUrlResult]);
-            // console.log('______________URLRESULT2', urlResultList)
         }
         )
     }, [urlResultList]);
 
     const handleChange = (event) => {
-        console.log('event', event.target.value)
+        console.log('event', event.target.checked)
         // console.log('element', element)
-        setChecked({ ...checked, [event.target.name]: event.target.checked })
-        console.log('checked', checked)
+        
+        //Set si la case est cochée ou non
+        console.log('checked1', checked)
+        // checked[event.target.name] = event.target.checked;
+        
+        isChecked = {...checked, [event.target.name]: event.target.checked} 
+        console.log('test', isChecked)
+        setChecked(isChecked)
+        console.log('checked2', checked)
+        
+        checkBoxStatus = event.target.checked
+        console.log('---variablecheckstatus', checkBoxStatus)
+        setCheckStatus(checkBoxStatus)
+        console.log('---checkstatus', checkStatus)
 
+        //Set le nom de la check box
         checkBoxName = event.target.name
+        console.log('____________________variablename', checkBoxName)
         setCheckName(checkBoxName)
         console.log('______________________name', checkName);
 
-        // checkBoxCode = event.target.value
-        // console.log("checkboxcode", checkBoxCode);
-        if (!checkCode.includes(event.target.value[0])) {
+
+        //Set le code de la check box
+        let codeIn = []
+        if (checkCode.length===0 && event.target.checked===false) {
+            // codeIn.push(event.target.value[0])
+            codeIn.push({code : event.target.value[0], status : event.target.checked})
+            console.log('codein', codeIn)
+            setCheckCode(codeIn)
+        }
+        else if (!checkCode.includes(event.target.value[0]) && event.target.checked===false) {
             setCheckCode([...checkCode, event.target.value[0]])
         } 
-        // else {
-        //     var index = checkCode.indexOf(event.target.value[0]);
-        //     if (index !== -1) {
-        //         checkCode.splice(index, 1);
-        //     }
-        //     setCheckCode(checkCode)
-        // }
+        else if (event.target.value[0] === checkCode.find(element=>element===(event.target.value[0]))) {
+            checkCode.splice(checkCode.indexOf(event.target.value[0]), 1)
+        }
+     
         console.log('--------------------------------code', checkCode);
 
-        checkBoxStatus = event.target.checked
-        setCheckStatus(checkBoxStatus)
-        console.log('statu', checkBoxStatus)
 
-
-        // console.log('name', checkStatus)
-
-        // console.log('display1', displayNone);
     }
 
-    // console.log('statu1', checkStatus)
+    console.log('checked3', checked)
+    console.log('test2', isChecked)
+    console.log('---checkstatus2', checkStatus)
+    console.log('--------------------------------------------------------code1', checkCode);
+    console.log('name2', checkName);
+
+
+  
 
 
 
@@ -134,26 +150,20 @@ function Home() {
         let hours = newFormatDate[2]
         let url = newFormat[0]
         code = newFormat[1]
-        console.log('code', code)
-        console.log('checkboxnumb', checkCode)
+        // console.log('code', code)
+        // console.log('checkboxnumb', checkCode)
         
         let codeFirst = code[0]
 
-        console.log('FIRSSSSSSSSSSSSSTTTTTTTTTTTT', codeFirst)
+        // console.log('FIRSSSSSSSSSSSSSTTTTTTTTTTTT', codeFirst)
     
 
-        let displayNone;
-        if (checkStatus === false && checkCode.includes(codeFirst)) {
-
+        let displayNone = {};
+        if (checkStatus === false && checkCode.includes(codeFirst) ) {
             displayNone = {
                 display: 'none'
             }
-        } else {
-            displayNone = {
-                // display : "block"
-            }
         }
-        // console.log('display3', displayNone);
 
         return (
             <tbody>
