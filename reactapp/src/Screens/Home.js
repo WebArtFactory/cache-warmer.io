@@ -17,7 +17,7 @@ function Home() {
 
     const [url, setUrl] = useState("");
     const [urlResultList, setUrlResultList] = useState([]);
-    // console.log('______________URLRESULT1', urlResultList)
+    console.log('______________URLRESULT0', urlResultList)
     const [checked, setChecked] = React.useState({
         "2": true,
         "3": true,
@@ -28,19 +28,36 @@ function Home() {
 
 
     let code;
+    
+    
+    // useEffect(() => {
+        //     setUrlResultList([])
+        // }, []);
+        
+        useEffect(() => {
+            socket.on('urlFromBack', (newUrlResult) => {
+                console.log('newurl', newUrlResult)
+                let urlResultCopy;
+                
+            // if (urlResultList.length === 0) {
+            //     urlResultCopy.push(newUrlResult)
+            //     setUrlResultList([newUrlResult]);
+            // }
+            // for (let i = 0; i < urlResultList.length; i++) {
+                if (!urlResultList.includes(newUrlResult)) {
+                    urlResultCopy = [...urlResultList];
+                    urlResultCopy.push(newUrlResult)
+                    setUrlResultList(urlResultCopy);
+                }
+            // }
+            // urlResultCopy = [...urlResultList];
+            // urlResultCopy.push(newUrlResult)
+            // setUrlResultList(urlResultCopy);
 
-
-    useEffect(() => {
-        socket.on('urlFromBack', (newUrlResult) => {
-            // console.log('newurl', newUrlResult)
-            // let newUrl = []
-            // newUrl.push(newUrlResult)
-            setUrlResultList([...urlResultList, newUrlResult]);
-            console.log('urlList1', urlResultList)
         });
     }, [urlResultList]);
 
-    // console.log('urlList2', urlResultList)
+    // console.log('------------------------------------------------urlList2', urlResultList)
 
 
     // socket.on('countFromBack', (urlCount) => {
@@ -130,8 +147,8 @@ function Home() {
         }
 
         return (
-            <tbody>
-                <tr key={i} style={displayNone}>
+            <tbody key={i}>
+                <tr style={displayNone}>
                     <td>{url}</td>
                     <td>{date}</td>
                     <td>{hours}</td>

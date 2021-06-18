@@ -13,11 +13,11 @@ return module.exports = {
      * Varibales
      */
     app: null,
-    totalEntries: 0,
+    // totalEntries: 0,
     socket: null,
     name: 'Crawler Web',
     current: 0,
-    limitPerSitemap: 3,
+    limitPerSitemap: 2,
 
 
     /**
@@ -36,17 +36,17 @@ return module.exports = {
      */
     run: async function (config, socket, callback) {
         await fs.truncateSync('var/log/urls.txt', 0);
+        
         this.socket = await socket;
-
         var pagesitemap = await config['url']
-            // totalCount;
-
+        // totalCount;
+        
         // await this.countUrls(pagesitemap);
-
+        
         // console.log(this.totalEntries)
-
+        
         await this.navigateSiteMap(pagesitemap);
-
+        
         return '@todo'
     },
 
@@ -136,7 +136,7 @@ return module.exports = {
                 uri: url,
                 resolveWithFullResponse: true
             });
-            console.log('response', response.statusCode)
+            // console.log('response', response.statusCode)
             let code = response.statusCode;
             let data = await url + "," + code + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
