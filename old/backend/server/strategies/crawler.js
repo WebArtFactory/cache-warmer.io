@@ -17,7 +17,7 @@ return module.exports = {
     socket: null,
     name: 'Crawler Web',
     current: 0,
-    limitPerSitemap: 500000000,
+    limitPerSitemap: 3,
 
 
     /**
@@ -38,12 +38,12 @@ return module.exports = {
         await fs.truncateSync('var/log/urls.txt', 0);
         this.socket = await socket;
 
-        var pagesitemap = await config['url'],
-            totalCount;
+        var pagesitemap = await config['url']
+            // totalCount;
 
-        await this.countUrls(pagesitemap);
+        // await this.countUrls(pagesitemap);
 
-        console.log(this.totalEntries)
+        // console.log(this.totalEntries)
 
         await this.navigateSiteMap(pagesitemap);
 
@@ -57,34 +57,34 @@ return module.exports = {
      *
     //  * Make the difference with the Urlset and sitemapindex
     //  */
-    countUrls: async function (pagesitemap) {
-        var _this = this;
-        let result;
+    // countUrls: async function (pagesitemap) {
+    //     var _this = this;
+    //     let result;
 
-        try {
-            let body = await requestPromise(pagesitemap);
-            // console.log('body', body);
-            result = await xml2js.parseStringPromise(body)
-            console.log('result', result)
-        } catch (err) {
-            console.log('err', err);
-            process.exit(1);
-        }
+    //     try {
+    //         let body = await requestPromise(pagesitemap);
+    //         // console.log('body', body);
+    //         result = await xml2js.parseStringPromise(body)
+    //         console.log('result', result)
+    //     } catch (err) {
+    //         console.log('err', err);
+    //         process.exit(1);
+    //     }
 
-        let el1;
-        if (typeof result.urlset == 'undefined') {
-            for (let element of result.sitemapindex.sitemap) {
-                console.log('On commence à parcourir le sitemap : ' + element.loc[0])
-                await _this.countUrls(element.loc[0])
-                // console.log('el1', el1)
-            }
-        } else {
-            _this.totalEntries += result.urlset.url.length;
-            console.log('count de 1 sitemap : ' + result.urlset.url.length)
-            await _this.socket.emit('countFromBack', _this.totalEntries)
+    //     let el1;
+    //     if (typeof result.urlset == 'undefined') {
+    //         for (let element of result.sitemapindex.sitemap) {
+    //             console.log('On commence à parcourir le sitemap : ' + element.loc[0])
+    //             await _this.countUrls(element.loc[0])
+    //             // console.log('el1', el1)
+    //         }
+    //     } else {
+    //         _this.totalEntries += result.urlset.url.length;
+    //         console.log('count de 1 sitemap : ' + result.urlset.url.length)
+    //         // await _this.socket.emit('countFromBack', _this.totalEntries)
 
-        }
-    },
+    //     }
+    // },
 
     /**
      *

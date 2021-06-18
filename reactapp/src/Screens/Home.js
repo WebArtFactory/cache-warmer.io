@@ -24,34 +24,41 @@ function Home() {
         "4": true,
         "5": true,
     });
-    const [totalUrl, setTotalUrl] = useState();
+    // const [totalUrl, setTotalUrl] = useState();
+
 
     let code;
 
-    useEffect(() => {
 
+    useEffect(() => {
         socket.on('urlFromBack', (newUrlResult) => {
+            // console.log('newurl', newUrlResult)
+            // let newUrl = []
+            // newUrl.push(newUrlResult)
             setUrlResultList([...urlResultList, newUrlResult]);
-        }
-        )
+            console.log('urlList1', urlResultList)
+        });
     }, [urlResultList]);
 
-    socket.on('countFromBack', (urlCount) => {
-        console.log(urlCount)
-        setTotalUrl(urlCount)
-    })
-    console.log('total', totalUrl)
+    // console.log('urlList2', urlResultList)
 
-    const getProgressiveBar = () => {
-        if (totalUrl > 0) {
-            let progressValue = ((urlResultList.length * 100) / totalUrl)
-            console.log('urllist', urlResultList.length)
-            console.log('progress', progressValue)
-            return (
-                <Progress animated value={progressValue} />
-            )
-        }
-    }
+
+    // socket.on('countFromBack', (urlCount) => {
+    //     console.log(urlCount)
+    //     setTotalUrl(urlCount)
+    // })
+    // console.log('total', totalUrl)
+
+    // const getProgressiveBar = () => {
+    //     if (totalUrl > 0) {
+    //         let progressValue = ((urlResultList.length * 100) / totalUrl)
+    //         // console.log('urllist', urlResultList.length)
+    //         // console.log('progress', progressValue)
+    //         return (
+    //             <Progress animated value={progressValue} />
+    //         )
+    //     }
+    // }
 
     const handleChange = (event) => {
         let checkedStatus = { ...checked, [event.target.name]: event.target.checked }
@@ -124,7 +131,7 @@ function Home() {
 
         return (
             <tbody>
-                <tr style={displayNone}>
+                <tr key={i} style={displayNone}>
                     <td>{url}</td>
                     <td>{date}</td>
                     <td>{hours}</td>
@@ -158,7 +165,7 @@ function Home() {
                 </div>
             </div>
             <div className="table">
-                {getProgressiveBar()}
+                {/* {getProgressiveBar()} */}
             </div>
             {getCheckBox()}
             <div>
