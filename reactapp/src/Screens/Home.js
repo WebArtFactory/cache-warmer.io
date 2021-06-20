@@ -27,8 +27,8 @@ function Home() {
      *
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
-    let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
-    // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
+    // let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
+    let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
 
     useEffect(() => {
         socket.on('urlFromBack', (newUrlResult) => {
@@ -117,7 +117,6 @@ function Home() {
         let date = newFormatDate[1]
         let hours = newFormatDate[2]
         let url = newFormat[0]
-        let className = "elem-" + {i}
         code = newFormat[1]
         // console.log('code', code)
         // console.log('1ere lettre du code de la ligne', code[0])
@@ -134,7 +133,7 @@ function Home() {
         }
 
         return (
-            <tr class={className} style={displayNone}>
+            <tr key={i} style={displayNone}>
                 <td>{url}</td>
                 <td>{date}</td>
                 <td>{hours}</td>
