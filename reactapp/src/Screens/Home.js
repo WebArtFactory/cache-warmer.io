@@ -27,8 +27,8 @@ function Home() {
      *
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
-    // let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
-    let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
+    let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
+    // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
 
     useEffect(() => {
         socket.on('urlFromBack', (newUrlResult) => {
