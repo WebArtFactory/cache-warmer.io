@@ -1,64 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Progress } from 'reactstrap';
+import React, {useEffect, useState} from 'react';
+import {Table} from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Navigation from '../Components/Nav';
 import socketIOClient from 'socket.io-client';
-import Style from '../Style.css';
 
-
-/**
- * @todo Rajouter l'appel à un paramètre process.env.PORT
- */
-let socket = socketIOClient("http://127.0.0.1:3000", { transports: ['websocket'] })
-// let socket = socketIOClient("http://51.210.100.11:3000", { transports : ['websocket'] })
 
 function Home() {
-
-    const [url, setUrl] = useState("");
     const [urlResultList, setUrlResultList] = useState([]);
-    console.log('______________URLRESULT0', urlResultList)
     const [checked, setChecked] = React.useState({
         "2": true,
         "3": true,
         "4": true,
         "5": true,
     });
-    // const [totalUrl, setTotalUrl] = useState();
-
-
+    const [totalUrl, setTotalUrl] = useState();
     let code;
-    
-    
-    // useEffect(() => {
-        //     setUrlResultList([])
-        // }, []);
-        
-        useEffect(() => {
-            socket.on('urlFromBack', (newUrlResult) => {
-                console.log('newurl', newUrlResult)
-                let urlResultCopy;
-                
-            // if (urlResultList.length === 0) {
-            //     urlResultCopy.push(newUrlResult)
-            //     setUrlResultList([newUrlResult]);
-            // }
-            // for (let i = 0; i < urlResultList.length; i++) {
-                if (!urlResultList.includes(newUrlResult)) {
-                    urlResultCopy = [...urlResultList];
-                    urlResultCopy.push(newUrlResult)
-                    setUrlResultList(urlResultCopy);
-                }
-            // }
-            // urlResultCopy = [...urlResultList];
-            // urlResultCopy.push(newUrlResult)
-            // setUrlResultList(urlResultCopy);
 
+    // const [url, setUrl] = useState("");
+    console.log('______________URLRESULT0', urlResultList)
+
+    /**
+     * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
+     * à chaque rechargement.
+     * C'est précisement ce point qui a réglé le problème d'envoie multiple sur le front.
+     *
+     * @todo Rajouter l'appel à un paramètre process.env.PORT
+     */
+    let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
+    // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
+
+    useEffect(() => {
+        socket.on('urlFromBack', (newUrlResult) => {
+            // console.log('urlFromBack : ', newUrlResult)
+            // console.log('urlResultList : ', urlResultList)
+
+            /**
+             * @see https://stackoverflow.com/questions/60658254/socket-io-listener-firing-too-many-times-in-functional-react
+             * Comme indiqué dans la réponse, cette syntaxe permet de faire appel à la valeure précédente de notre urlResultList.
+             *
+             * J'ai mis totoToRename mais j'aurais pu mettre n'importe quoi
+             *
+             * Pour finir, je met newUrlResult en 1er pour inverser l'ordre d'affichage (la plus récente en haut de liste)
+             */
+            setUrlResultList(totoToRename => [newUrlResult, ...totoToRename]);
         });
     }, [urlResultList]);
-
-    // console.log('------------------------------------------------urlList2', urlResultList)
-
 
     // socket.on('countFromBack', (urlCount) => {
     //     console.log(urlCount)
@@ -78,10 +65,9 @@ function Home() {
     // }
 
     const handleChange = (event) => {
-        let checkedStatus = { ...checked, [event.target.name]: event.target.checked }
+        let checkedStatus = {...checked, [event.target.name]: event.target.checked}
         setChecked(checkedStatus)
     }
-
 
 
     const getCheckBox = () => {
@@ -89,19 +75,19 @@ function Home() {
             return (
                 <div className="checkbox">
                     <FormControlLabel
-                        control={<Checkbox checked={checked["2"]} onChange={handleChange} name="2" />}
+                        control={<Checkbox checked={checked["2"]} onChange={handleChange} name="2"/>}
                         label="Code 200" value="200"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["3"]} onChange={handleChange} name="3" />}
+                        control={<Checkbox checked={checked["3"]} onChange={handleChange} name="3"/>}
                         label="Code 300" value="300"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["4"]} onChange={handleChange} name="4" />}
+                        control={<Checkbox checked={checked["4"]} onChange={handleChange} name="4"/>}
                         label="Code 400" value="400"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["5"]} onChange={handleChange} name="5" />}
+                        control={<Checkbox checked={checked["5"]} onChange={handleChange} name="5"/>}
                         label="Code 500" value="500"
                     />
 
@@ -114,12 +100,12 @@ function Home() {
         if (urlResultList.length > 0) {
             return (
                 <thead>
-                    <tr>
-                        <th>URL</th>
-                        <th>Date</th>
-                        <th>Heure</th>
-                        <th>Code réponse HTTP</th>
-                    </tr>
+                <tr>
+                    <th>URL</th>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Code réponse HTTP</th>
+                </tr>
                 </thead>
             )
         }
@@ -131,6 +117,7 @@ function Home() {
         let date = newFormatDate[1]
         let hours = newFormatDate[2]
         let url = newFormat[0]
+        let className = "elem-" + {i}
         code = newFormat[1]
         // console.log('code', code)
         // console.log('1ere lettre du code de la ligne', code[0])
@@ -147,38 +134,35 @@ function Home() {
         }
 
         return (
-            <tbody key={i}>
-                <tr style={displayNone}>
-                    <td>{url}</td>
-                    <td>{date}</td>
-                    <td>{hours}</td>
-                    <td>{code}</td>
-                </tr>
-            </tbody>
-
+            <tr class={className} style={displayNone}>
+                <td>{url}</td>
+                <td>{date}</td>
+                <td>{hours}</td>
+                <td>{code}</td>
+            </tr>
         )
     })
 
     return (
         <div>
-            <Navigation />
+            <Navigation/>
 
-            <div style={{ backgroundColor: '#FF7F50' }}>
+            <div style={{backgroundColor: '#FF7F50'}}>
                 <p
-                    style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
+                    style={{color: 'white', textAlign: 'center', fontSize: '50px'}}>
                     Entrez votre URL
                 </p>
                 <div className="inputButton">
                     <input
+                        id="url-input"
                         className="input"
                         placeholder="Mon URL"
-                        onChange={(e) => setUrl(e.target.value)}
-                        value={url}
                     />
                     <button
                         className="button"
-                        onClick={() => socket.emit("urlFromFront", url)}
-                    >Confirmer</button>
+                        onClick={() => socket.emit("urlFromFront", document.getElementById('url-input').value)}
+                    >Confirmer
+                    </button>
                 </div>
             </div>
             <div className="table">
@@ -188,7 +172,9 @@ function Home() {
             <div>
                 <Table className="table">
                     {getTable()}
+                    <tbody>
                     {urlResultItem}
+                    </tbody>
                 </Table>
 
             </div>

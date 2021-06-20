@@ -14,7 +14,9 @@ return module.exports = {
      */
     app: null,
     // totalEntries: 0,
+    io: null,
     socket: null,
+    socketId: null,
     name: 'Crawler Web',
     current: 0,
     limitPerSitemap: 2,
@@ -34,19 +36,20 @@ return module.exports = {
      *
      * @return void
      */
-    run: async function (config, socket, callback) {
+    run: async function (config, io, socketId, callback) {
         await fs.truncateSync('var/log/urls.txt', 0);
-        
-        this.socket = await socket;
+
+        this.io = io;
+        this.socketId = socketId;
         var pagesitemap = await config['url']
         // totalCount;
-        
+
         // await this.countUrls(pagesitemap);
-        
+
         // console.log(this.totalEntries)
-        
+
         await this.navigateSiteMap(pagesitemap);
-        
+
         return '@todo'
     },
 
@@ -55,8 +58,8 @@ return module.exports = {
      * @param pagesitemap
      * @param callback
      *
-    //  * Make the difference with the Urlset and sitemapindex
-    //  */
+     //  * Make the difference with the Urlset and sitemapindex
+     //  */
     // countUrls: async function (pagesitemap) {
     //     var _this = this;
     //     let result;
@@ -91,8 +94,8 @@ return module.exports = {
      * @param pagesitemap
      * @param callback
      *
-    //  * Make the difference with the Urlset and sitemapindex
-    //  */
+     //  * Make the difference with the Urlset and sitemapindex
+     //  */
     navigateSiteMap: async function (pagesitemap) {
         var _this = this;
         let result;
@@ -140,13 +143,12 @@ return module.exports = {
             let code = response.statusCode;
             let data = await url + "," + code + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
-            await _this.socket.emit('urlFromBack', data)
-            await fs.appendFileSync('var/log/urls.txt', data);
+            _this.io.to(_this.socketId).emit('urlFromBack', data);
+            fs.appendFileSync('var/log/urls.txt', data);
             if (urlList.length > 0 && _this.current < _this.limitPerSitemap) {
                 await _this.navigateUrls(urlList);
             }
-        }
-        catch (err) {
+        } catch (err) {
             console.log('err', err);
 
         }
