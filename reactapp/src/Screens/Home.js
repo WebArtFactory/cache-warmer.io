@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Table} from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { Table, Progress } from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Navigation from '../Components/Nav';
@@ -14,11 +14,11 @@ function Home() {
         "4": true,
         "5": true,
     });
-    const [totalUrl, setTotalUrl] = useState();
+    const [totalUrl, setTotalUrl] = useState(0);
     let code;
 
     // const [url, setUrl] = useState("");
-    console.log('______________URLRESULT0', urlResultList)
+    // console.log('______________URLRESULT0', urlResultList)
 
     /**
      * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
@@ -27,7 +27,7 @@ function Home() {
      *
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
-    let socket = socketIOClient("127.0.0.1:3000", {transports: ['websocket']})
+    let socket = socketIOClient("http://127.0.0.1:3000", { transports: ['websocket'] })
     // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
 
     useEffect(() => {
@@ -44,28 +44,31 @@ function Home() {
              * Pour finir, je met newUrlResult en 1er pour inverser l'ordre d'affichage (la plus récente en haut de liste)
              */
             setUrlResultList(totoToRename => [newUrlResult, ...totoToRename]);
+
         });
+        socket.on('countFromBack', (urlCount) => {
+            console.log('urlcount', urlCount)
+            setTotalUrl(urlCount)
+        })
+        
     }, [urlResultList]);
+    
+    console.log('total', totalUrl)
+    console.log('length', urlResultList.length)
 
-    // socket.on('countFromBack', (urlCount) => {
-    //     console.log(urlCount)
-    //     setTotalUrl(urlCount)
-    // })
-    // console.log('total', totalUrl)
-
-    // const getProgressiveBar = () => {
-    //     if (totalUrl > 0) {
-    //         let progressValue = ((urlResultList.length * 100) / totalUrl)
-    //         // console.log('urllist', urlResultList.length)
-    //         // console.log('progress', progressValue)
-    //         return (
-    //             <Progress animated value={progressValue} />
-    //         )
-    //     }
-    // }
+    const getProgressiveBar = () => {
+        if (urlResultList.length > 0) {
+            let progressValue = ((urlResultList.length * 100) / totalUrl)
+            // console.log('urllist', urlResultList.length)
+            // console.log('progress', progressValue)
+            return (
+                <Progress animated value={progressValue} />
+            )
+        }
+    }
 
     const handleChange = (event) => {
-        let checkedStatus = {...checked, [event.target.name]: event.target.checked}
+        let checkedStatus = { ...checked, [event.target.name]: event.target.checked }
         setChecked(checkedStatus)
     }
 
@@ -75,19 +78,19 @@ function Home() {
             return (
                 <div className="checkbox">
                     <FormControlLabel
-                        control={<Checkbox checked={checked["2"]} onChange={handleChange} name="2"/>}
+                        control={<Checkbox checked={checked["2"]} onChange={handleChange} name="2" />}
                         label="Code 200" value="200"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["3"]} onChange={handleChange} name="3"/>}
+                        control={<Checkbox checked={checked["3"]} onChange={handleChange} name="3" />}
                         label="Code 300" value="300"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["4"]} onChange={handleChange} name="4"/>}
+                        control={<Checkbox checked={checked["4"]} onChange={handleChange} name="4" />}
                         label="Code 400" value="400"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={checked["5"]} onChange={handleChange} name="5"/>}
+                        control={<Checkbox checked={checked["5"]} onChange={handleChange} name="5" />}
                         label="Code 500" value="500"
                     />
 
@@ -100,12 +103,12 @@ function Home() {
         if (urlResultList.length > 0) {
             return (
                 <thead>
-                <tr>
-                    <th>URL</th>
-                    <th>Date</th>
-                    <th>Heure</th>
-                    <th>Code réponse HTTP</th>
-                </tr>
+                    <tr>
+                        <th>URL</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Code réponse HTTP</th>
+                    </tr>
                 </thead>
             )
         }
@@ -144,11 +147,11 @@ function Home() {
 
     return (
         <div>
-            <Navigation/>
+            <Navigation />
 
-            <div style={{backgroundColor: '#FF7F50'}}>
+            <div style={{ backgroundColor: '#FF7F50' }}>
                 <p
-                    style={{color: 'white', textAlign: 'center', fontSize: '50px'}}>
+                    style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
                     Entrez votre URL
                 </p>
                 <div className="inputButton">
@@ -165,14 +168,14 @@ function Home() {
                 </div>
             </div>
             <div className="table">
-                {/* {getProgressiveBar()} */}
+                {getProgressiveBar()}
             </div>
             {getCheckBox()}
             <div>
                 <Table className="table">
                     {getTable()}
                     <tbody>
-                    {urlResultItem}
+                        {urlResultItem}
                     </tbody>
                 </Table>
 
