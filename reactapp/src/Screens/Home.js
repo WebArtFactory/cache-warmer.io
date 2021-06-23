@@ -16,9 +16,7 @@ function Home() {
     });
     const [totalUrl, setTotalUrl] = useState(0);
     let code;
-
-    // const [url, setUrl] = useState("");
-    // console.log('______________URLRESULT0', urlResultList)
+    // let test = [];
 
     /**
      * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
@@ -27,14 +25,15 @@ function Home() {
      *
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
-    let socket = socketIOClient("http://127.0.0.1:3000", { transports: ['websocket'] })
+    let socket = socketIOClient("http://192.168.1.190:3000", { transports: ['websocket'], reconnection:false })
     // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
 
     useEffect(() => {
         socket.on('urlFromBack', (newUrlResult) => {
+            
             // console.log('urlFromBack : ', newUrlResult)
             // console.log('urlResultList : ', urlResultList)
-
+            // test.push(newUrlResult)
             /**
              * @see https://stackoverflow.com/questions/60658254/socket-io-listener-firing-too-many-times-in-functional-react
              * Comme indiqué dans la réponse, cette syntaxe permet de faire appel à la valeure précédente de notre urlResultList.
@@ -43,13 +42,18 @@ function Home() {
              *
              * Pour finir, je met newUrlResult en 1er pour inverser l'ordre d'affichage (la plus récente en haut de liste)
              */
+            
             setUrlResultList(totoToRename => [newUrlResult, ...totoToRename]);
-
         });
         socket.on('countFromBack', (urlCount) => {
             console.log('urlcount', urlCount)
             setTotalUrl(urlCount)
         })
+        // const interval = setInterval(() => {
+        //     if (test.length > 0) {
+        //     }
+        // },5000)
+        // return () => clearInterval(interval)
         
     }, [urlResultList]);
     

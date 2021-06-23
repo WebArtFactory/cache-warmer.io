@@ -69,7 +69,7 @@ return module.exports = {
             let body = await requestPromise(pagesitemap);
             // console.log('body', body);
             result = await xml2js.parseStringPromise(body)
-            console.log('result', result)
+            // console.log('result', result)
         } catch (err) {
             console.log('err', err);
             process.exit(1);
@@ -84,13 +84,13 @@ return module.exports = {
             }
         } else {
 
-            if ( _this.totalEntriesTest !== null) {
+            if (_this.totalEntriesTest !== null) {
                 await _this.io.to(_this.socketId).emit('countFromBack', _this.totalEntriesTest);
             } else {
                 _this.totalEntries += result.urlset.url.length;
                 console.log('totalentreies', _this.totalEntries)
                 console.log('count de 1 sitemap : ' + result.urlset.url.length)
-    
+
                 await _this.io.to(_this.socketId).emit('countFromBack', _this.totalEntries);
             }
 
@@ -107,6 +107,9 @@ return module.exports = {
     navigateSiteMap: async function (pagesitemap) {
         var _this = this;
         let result;
+        let numbOfRobot = 10
+        let resultNavigateUrlLength = [];
+        let urls = []
 
         try {
             let body = await requestPromise(pagesitemap);
@@ -128,8 +131,28 @@ return module.exports = {
         } else {
             console.log('On commence à parcourir les URLs du sitemap.')
             _this.current = 0;
-            await _this.navigateUrls(result.urlset.url)
+            // console.log('--------------------------------------------------------------', result)
+            let resultNavigateUrl = await result.urlset.url
+
+            for (let i = 0; i < numbOfRobot; i++) {
+                urls[i] = []
+                resultNavigateUrlLength.push(Math.ceil(resultNavigateUrl.length / numbOfRobot) * (i + 1))
+
+                let j = 0; 
+                if (typeof resultNavigateUrlLength[i - 1] != 'undefined') {
+                    j = resultNavigateUrlLength[i - 1]
+                }
+
+                for (j;j < resultNavigateUrlLength[i]; j++) {
+                    urls[i].push(resultNavigateUrl[j])
+                }
+                // console.log('i', i);
+                _this.navigateUrls(urls[i])
+            }
+            // console.log('url', urls)
+            // console.log('ROBOT', resultNavigateUrlLength)
         }
+
     },
 
     navigateUrls: async function (urlList, response) {
@@ -142,6 +165,8 @@ return module.exports = {
 
         url = url.loc[0];
 
+
+
         try {
             let response = await requestPromise({
                 uri: url,
@@ -152,7 +177,7 @@ return module.exports = {
             let data = await url + "," + code + "," + " " + date.format(now, 'YYYY/MM/DD HH:mm:ss');
             console.log('data', data)
             _this.io.to(_this.socketId).emit('urlFromBack', data);
-            fs.appendFileSync('var/log/urls.txt', data);
+            // fs.appendFileSync('var/log/urls.txt', data + "\n");
             if (urlList.length > 0 && _this.current < _this.limitPerSitemap) {
                 await _this.navigateUrls(urlList);
             }
