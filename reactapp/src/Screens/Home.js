@@ -149,6 +149,16 @@ function Home() {
         )
     })
 
+    var onClickFn = () => {
+        let selectField = document.getElementById('nb-of-robots');
+        let selectedNbOfRobots = selectField.options[selectField.selectedIndex].value;
+
+        socket.emit("urlFromFront", { 
+            url: document.getElementById('url-input').value,
+            robot: selectedNbOfRobots
+            });
+    };
+
     return (
         <div>
             <Navigation />
@@ -164,9 +174,22 @@ function Home() {
                         className="input"
                         placeholder="Mon URL"
                     />
+                    <p
+                        style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
+                        Nombre de Robot
+                    </p>
+                    <form className="inputButton">
+                        <select id="nb-of-robots">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                        </select>
+                    </form>
                     <button
                         className="button"
-                        onClick={() => socket.emit("urlFromFront", document.getElementById('url-input').value)}
+                        onClick={onClickFn}
                     >Confirmer
                     </button>
                 </div>

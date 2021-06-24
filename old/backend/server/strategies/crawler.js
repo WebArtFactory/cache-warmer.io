@@ -21,6 +21,7 @@ return module.exports = {
     limitPerSitemap: 200000000000000000000,
     totalEntries: 0,
     totalEntriesTest: null,
+    robotNumber: null,
 
 
     /**
@@ -37,12 +38,13 @@ return module.exports = {
      *
      * @return void
      */
-    run: async function (config, io, socketId, callback) {
+    run: async function (config, robot, io, socketId, callback) {
         await fs.truncateSync('var/log/urls.txt', 0);
 
         this.io = io;
         this.socketId = socketId;
         var pagesitemap = await config['url']
+        this.robotNumber = await robot['robot']
         // totalCount;
 
         await this.countUrls(pagesitemap);
@@ -107,7 +109,8 @@ return module.exports = {
     navigateSiteMap: async function (pagesitemap) {
         var _this = this;
         let result;
-        let numbOfRobot = 10
+        // let numbOfRobot = robotNumber;
+        console.log('______________________________________robot', this.robotNumber)
         let resultNavigateUrlLength = [];
         let urls = []
 
@@ -133,10 +136,10 @@ return module.exports = {
             _this.current = 0;
             // console.log('--------------------------------------------------------------', result)
             let resultNavigateUrl = await result.urlset.url
-
-            for (let i = 0; i < numbOfRobot; i++) {
+            console.log('nombre de robot', _this.robotNumber)
+            for (let i = 0; i < _this.robotNumber; i++) {
                 urls[i] = []
-                resultNavigateUrlLength.push(Math.ceil(resultNavigateUrl.length / numbOfRobot) * (i + 1))
+                resultNavigateUrlLength.push(Math.ceil(resultNavigateUrl.length / _this.robotNumber) * (i + 1))
 
                 let j = 0; 
                 if (typeof resultNavigateUrlLength[i - 1] != 'undefined') {
