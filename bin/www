@@ -27,22 +27,23 @@ let io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
     socket.on('urlFromFront', function (url) {
-            console.log('url', url)
-            console.log('ROBOT1',url.robot)
-            console.log('socketId', socket.id)
-            let config = {
-                url : url.url
-            };
-            let robot = {
-                robot : url.robot
-            }
-            var endCrawl = () => {
-                console.log('Crawler complete');
-                // return process.exit(0);
-            };
+        console.log('url', url)
+        console.log('ROBOT1', url.robot)
+        console.log('socketId', socket.id)
+        let config = {
+            url: url.url,
+            robot: url.robot
+        };
+        // let robot = {
+        //     robot : url.robot
+        // }
+        var endCrawl = () => {
+            console.log('Crawler complete');
+            // return process.exit(0);
+        };
 
-            crawler.run(config, robot, io, socket.id, endCrawl);
-        }
+        crawler.run(config, io, socket.id, endCrawl);
+    }
     )
 })
 

@@ -5,6 +5,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Navigation from '../Components/Nav';
 import socketIOClient from 'socket.io-client';
 
+// let socket;
 
 function Home() {
     const [urlResultList, setUrlResultList] = useState([]);
@@ -15,9 +16,13 @@ function Home() {
         "5": true,
     });
     const [totalUrl, setTotalUrl] = useState(0);
+    const [robot, setRobot] = useState(1);
+    console.log('robot', robot)
+    const [url, setUrl] = useState("");
+    console.log('url', url)
     let code;
     // let test = [];
-
+    
     /**
      * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
      * à chaque rechargement.
@@ -25,13 +30,18 @@ function Home() {
      *
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
-    let socket = socketIOClient("http://192.168.1.190:3000", { transports: ['websocket'], reconnection:false })
     // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
-
-    useEffect(() => {
+    
+    let socket = socketIOClient("http://192.168.1.190:3000", { transports: ['websocket'] })
+    // useEffect(()=>{
+        //     handleClick()
+        // }, [])
+        
+        useEffect(() => {
+        
         socket.on('urlFromBack', (newUrlResult) => {
-            
-            // console.log('urlFromBack : ', newUrlResult)
+
+            console.log('urlFromBack : ', newUrlResult)
             // console.log('urlResultList : ', urlResultList)
             // test.push(newUrlResult)
             /**
@@ -42,11 +52,11 @@ function Home() {
              *
              * Pour finir, je met newUrlResult en 1er pour inverser l'ordre d'affichage (la plus récente en haut de liste)
              */
-            
+            // setRobot(newUrlResult.robot)
             setUrlResultList(totoToRename => [newUrlResult, ...totoToRename]);
         });
         socket.on('countFromBack', (urlCount) => {
-            console.log('urlcount', urlCount)
+            // console.log('urlcount', urlCount)
             setTotalUrl(urlCount)
         })
         // const interval = setInterval(() => {
@@ -54,11 +64,13 @@ function Home() {
         //     }
         // },5000)
         // return () => clearInterval(interval)
-        
-    }, [urlResultList]);
-    
-    console.log('total', totalUrl)
-    console.log('length', urlResultList.length)
+
+    }, [urlResultList, robot, socket]);
+
+
+
+    // console.log('total', totalUrl)
+    // console.log('length', urlResultList.length)
 
     const getProgressiveBar = () => {
         if (urlResultList.length > 0) {
@@ -102,6 +114,18 @@ function Home() {
             )
         }
     }
+
+    // const changeRobot = (event) => {
+    //     setRobot(event)
+    // }
+    const handleClick = async () => {
+        console.log('urldans fonction',url)
+        console.log('robotdansfonction', robot)
+       await socket.emit("urlFromFront", { url, robot })
+    }
+
+    console.log('url en dehors fonction',url)
+    console.log('robot en dehors fonction', robot)
 
     const getTable = () => {
         if (urlResultList.length > 0) {
@@ -149,16 +173,6 @@ function Home() {
         )
     })
 
-    var onClickFn = () => {
-        let selectField = document.getElementById('nb-of-robots');
-        let selectedNbOfRobots = selectField.options[selectField.selectedIndex].value;
-
-        socket.emit("urlFromFront", { 
-            url: document.getElementById('url-input').value,
-            robot: selectedNbOfRobots
-            });
-    };
-
     return (
         <div>
             <Navigation />
@@ -170,16 +184,17 @@ function Home() {
                 </p>
                 <div className="inputButton">
                     <input
-                        id="url-input"
                         className="input"
                         placeholder="Mon URL"
+                        onChange={(e) => setUrl(e.target.value)}
+                        value={url}
                     />
                     <p
                         style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
                         Nombre de Robot
                     </p>
                     <form className="inputButton">
-                        <select id="nb-of-robots">
+                        <select onChange={(e) => setRobot(e.target.value)} value={robot}>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -189,10 +204,12 @@ function Home() {
                     </form>
                     <button
                         className="button"
-                        onClick={onClickFn}
+                        onClick={() => handleClick()}
                     >Confirmer
                     </button>
                 </div>
+
+
             </div>
             <div className="table">
                 {getProgressiveBar()}

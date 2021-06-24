@@ -38,13 +38,13 @@ return module.exports = {
      *
      * @return void
      */
-    run: async function (config, robot, io, socketId, callback) {
+    run: async function (config, io, socketId, callback) {
         await fs.truncateSync('var/log/urls.txt', 0);
 
         this.io = io;
         this.socketId = socketId;
         var pagesitemap = await config['url']
-        this.robotNumber = await robot['robot']
+        this.robotNumber = await config['robot']
         // totalCount;
 
         await this.countUrls(pagesitemap);
