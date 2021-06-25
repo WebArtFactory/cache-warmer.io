@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Progress } from 'reactstrap';
+import { Table, Progress, Container, Row, Col } from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Navigation from '../Components/Nav';
@@ -22,7 +22,7 @@ function Home() {
     console.log('url', url)
     let code;
     // let test = [];
-    
+
     /**
      * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
      * à chaque rechargement.
@@ -31,14 +31,14 @@ function Home() {
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
     // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
-    
+
     let socket = socketIOClient("http://192.168.1.190:3000", { transports: ['websocket'] })
     // useEffect(()=>{
-        //     handleClick()
-        // }, [])
-        
-        useEffect(() => {
-        
+    //     handleClick()
+    // }, [])
+
+    useEffect(() => {
+
         socket.on('urlFromBack', (newUrlResult) => {
 
             console.log('urlFromBack : ', newUrlResult)
@@ -119,12 +119,12 @@ function Home() {
     //     setRobot(event)
     // }
     const handleClick = async () => {
-        console.log('urldans fonction',url)
+        console.log('urldans fonction', url)
         console.log('robotdansfonction', robot)
-       await socket.emit("urlFromFront", { url, robot })
+        await socket.emit("urlFromFront", { url, robot })
     }
 
-    console.log('url en dehors fonction',url)
+    console.log('url en dehors fonction', url)
     console.log('robot en dehors fonction', robot)
 
     const getTable = () => {
@@ -177,40 +177,55 @@ function Home() {
         <div>
             <Navigation />
 
-            <div style={{ backgroundColor: '#FF7F50' }}>
-                <p
-                    style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
-                    Entrez votre URL
-                </p>
-                <div className="inputButton">
-                    <input
-                        className="input"
-                        placeholder="Mon URL"
-                        onChange={(e) => setUrl(e.target.value)}
-                        value={url}
-                    />
-                    <p
-                        style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
-                        Nombre de Robot
-                    </p>
-                    <form className="inputButton">
-                        <select onChange={(e) => setRobot(e.target.value)} value={robot}>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                        </select>
-                    </form>
-                    <button
-                        className="button"
-                        onClick={() => handleClick()}
-                    >Confirmer
-                    </button>
-                </div>
-
-
+            <div className="banniere">
+                <img src="url(../images/bannieref.png)" alt ="banniere"/>
             </div>
+
+            <Container fluid>
+
+                <Row>
+                    <Col>
+                        <p
+                            style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
+                            Entrez votre URL
+                        </p>
+                        <div className="inputButton">
+                            <input
+                                className="input"
+                                placeholder="Mon URL"
+                                onChange={(e) => setUrl(e.target.value)}
+                                value={url}
+                            />
+                        </div>
+                    </Col>
+                    <Col>
+                        <p
+                            style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
+                            Nombre de Robot
+                        </p>
+                        <form className="inputButton">
+                            <select onChange={(e) => setRobot(e.target.value)} value={robot}>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                            </select>
+                        </form>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className="confirmer">
+                        <button
+                            className="button"
+                            onClick={() => handleClick()}
+                        >Confirmer
+                        </button>
+                    </Col>
+                </Row>
+
+            </Container>
+
             <div className="table">
                 {getProgressiveBar()}
             </div>
@@ -225,7 +240,7 @@ function Home() {
 
             </div>
 
-        </div>
+        </div >
     );
 }
 

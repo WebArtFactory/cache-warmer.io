@@ -7,7 +7,7 @@ function Navigation() {
 
 
     return (
-        <div>
+        <div style={{ backgroundColor: '#f7a952'}}>
             <div className="row">
                 <Navbar className="nav" expand="lg">
                     <div className="col-md-6">
@@ -17,23 +17,23 @@ function Navigation() {
                     </div>
                     <div className="col-md-6 navcat">
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Accueil</NavLink>
+                            <NavLink style={{ color: "white"}} href='#'>Accueil</NavLink>
                         </NavItem>
 
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Category 2</NavLink>
+                            <NavLink style={{ color: "white" }} href='#'>Category 2</NavLink>
                         </NavItem>
 
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Category 3</NavLink>
+                            <NavLink style={{ color: "white" }} href='#'>Category 3</NavLink>
                         </NavItem>
 
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Category 4</NavLink>
+                            <NavLink style={{ color: "white" }} href='#'>Category 4</NavLink>
                         </NavItem>
 
                         <NavItem className="navbar">
-                            <NavLink style={{ color: 'black' }} href='#'>Category 5</NavLink>
+                            <NavLink style={{ color: "white" }} href='#'>Category 5</NavLink>
                         </NavItem>
                     </div>
                 </Navbar>
