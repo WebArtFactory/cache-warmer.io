@@ -29,17 +29,27 @@
   /* height : 150px; */
 }
 
-.inputButton {
+/* .inputButton {
   display : flex !important;
   flex-direction : column;
   align-items: center;
-}
+} */
 
 .input {
   width : 30%;
   height: 40px;
   margin-bottom: 10px;
   border-radius: 10px;
+  margin-left: 500px;
+  margin-top: 30px;
+}
+
+.inputField {
+  color : white;
+}
+
+.select {
+  margin-right: 500px;
 }
 
 .confirmer {
@@ -50,12 +60,21 @@
 }
 
 .button {
-  margin-bottom: 10px;
-  border-radius: 10px;
-  height: 35px;
-  width : 300px;
-  color : #FF7F50;
-  background-color: white;
+  /* margin-bottom: 10px;
+  border-radius: 10px; */
+  /* height: 35px; */
+  /* width : 300px; */
+  font-weight: bold;
+  border-color: #0000 !important;
+  color: #f7a952 !important;
+  /* color : white;
+  background-color: white; */
+}
+
+.button:hover {
+  background-color: #f7a952 !important;
+  color : white !important;
+  font-weight: bold;
 }
 
 .table {
@@ -68,7 +87,67 @@
   margin : 0 auto;
 }
 
-/* .banniere {
-  width:100%;
-  background-image: url("./images/bannieref.png");
-} */
+.banniere {
+  margin : 10px auto;
+  display: block;
+}
+
+.containerText {
+  display: block;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0;
+ 
+}
+
+.textBanniere {
+  display: flex;
+  background-color: #f7a952;
+  color : white;
+  text-align: center;
+  font-weight: bold;
+  height: 90px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+  
+}
+
+.inputsContainer {
+  background-color:  #fff ;
+  margin-top: 20px;
+  width : 70%;
+  display: flex;
+  margin: 0 auto;
+  margin-top: 15px;
+  display: flex;
+}
+
+.textDesc {
+  color : #f7a952;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.text {
+  margin-left: 300px;
+}
+
+.loginText {
+margin-top: 15px;
+/* padding-right: 15px; */
+ align-self: center;
+ justify-content: center;
+}
+
+.loginField {
+  margin: 40px;
+  text-align: center;
+}
+
+.row {
+  justify-content: center;
+}

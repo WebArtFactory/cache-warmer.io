@@ -2,10 +2,39 @@ import React, { useEffect, useState } from 'react';
 import { Table, Progress, Container, Row, Col } from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import Navigation from '../Components/Nav';
 import socketIOClient from 'socket.io-client';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+// import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
 
 // let socket;
+
+const useStyles = makeStyles((theme) => ({
+    margin: {
+        margin: theme.spacing(1),
+    },
+    extendedIcon: {
+        marginRight: theme.spacing(1),
+    },
+    root: {
+        '& > *': {
+            margin: theme.spacing(1),
+            width: '50ch',
+        },
+    }, formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
 
 function Home() {
     const [urlResultList, setUrlResultList] = useState([]);
@@ -22,6 +51,8 @@ function Home() {
     console.log('url', url)
     let code;
     // let test = [];
+
+    const classes = useStyles();
 
     /**
      * On définit le socket.io à l'interieur de la fonctione Home(), de manière à ce qu'il soit bien détruit
@@ -177,33 +208,51 @@ function Home() {
         <div>
             <Navigation />
 
-            <div className="banniere">
-                <img src="url(../images/bannieref.png)" alt ="banniere"/>
+            <div>
+                <img className="banniere" src={('../images/bannieref.png')} alt="banniere" />
             </div>
+
 
             <Container fluid>
 
                 <Row>
+                    <Col className='containerText'>
+                        <p className='textBanniere'> Génère automatiquement le cache de votre site web</p>
+
+                    </Col>
+                </Row>
+
+
+
+
+                <Row className='inputsContainer'>
+                    <Col className="textDesc">
+                        <p className='text'>Mon URL à parcourir : </p>
+                    </Col>
                     <Col>
-                        <p
-                            style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
-                            Entrez votre URL
-                        </p>
-                        <div className="inputButton">
-                            <input
+                        <div>
+                            {/* <input
                                 className="input"
                                 placeholder="Mon URL"
                                 onChange={(e) => setUrl(e.target.value)}
                                 value={url}
-                            />
+                            /> */}
+                            <form className={classes.root} noValidate autoComplete="off">
+                                <TextField id="outlined-basic" label="Mon URL" variant="outlined" className="inputField"
+                                    onChange={(e) => setUrl(e.target.value)} value={url}
+                                />
+                            </form>
                         </div>
                     </Col>
-                    <Col>
-                        <p
-                            style={{ color: 'white', textAlign: 'center', fontSize: '50px' }}>
+                </Row>
+                <Row className='inputsContainer'>
+                    <Col className="textDesc">
+                        <p className='text'>
                             Nombre de Robot
                         </p>
-                        <form className="inputButton">
+                    </Col>
+                    <Col>
+                        {/* <form className="inputButton select">
                             <select onChange={(e) => setRobot(e.target.value)} value={robot}>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -211,16 +260,37 @@ function Home() {
                                 <option value="5">5</option>
                                 <option value="10">10</option>
                             </select>
-                        </form>
+                        </form> */}
+                        <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-outlined-label">Nombre de robot</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={robot}
+                                onChange={(e) => setRobot(e.target.value)}
+                                label="Robot"
+                            >
+                                <MenuItem value={robot}>
+                                    <em>None</em>
+                                </MenuItem>
+                                <MenuItem value="1">1</MenuItem>
+                                <MenuItem value="2">2</MenuItem>
+                                <MenuItem value="3">3</MenuItem>
+                                <MenuItem value="5">5</MenuItem>
+                                <MenuItem value="10">10</MenuItem>
+                            </Select>
+                        </FormControl>
+
+
                     </Col>
                 </Row>
-                <Row>
+                <Row className='inputsContainer'>
                     <Col className="confirmer">
-                        <button
-                            className="button"
-                            onClick={() => handleClick()}
-                        >Confirmer
-                        </button>
+                        <Button color="primary" size="lg" className="button" block
+                            // className={classes.margin, 'button'}
+                            onClick={() => handleClick()} >
+                            Lancer le cache Crawler
+                        </Button>
                     </Col>
                 </Row>
 
