@@ -31,8 +31,12 @@ function Login() {
         return expression.test(String(email).toLowerCase());
     };
 
-    const handleClickSignIn = () => {
-
+    const handleClickSignIn = async () => {
+        const data = await fetch('http://localhost:3001/signin', {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body : `emailFromFront=${email}&passwordFromFront=${password}`
+        })
     } 
 
     const handleClickSignUp = () => {
