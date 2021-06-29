@@ -1,10 +1,14 @@
+// const mysql = require('mysql2'); pourquoi on a pas besoin d'utiliser ça ? 
 require('dotenv').config()
+const sequelize = require('./utils/database')
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const User = require('./models/users')
+// sequelize.sync() ça ne marche pas pourquoi ? 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 

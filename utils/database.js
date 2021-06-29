@@ -25,4 +25,11 @@ const sequelize = new Sequelize(
     }
 );
 
+try {
+    // sequelize.authenticate(); pourquoi ca ne marche pas ? 
+    console.log('Connecté à la base de données MySQL!');
+  } catch (error) {
+    console.error('Impossible de se connecter, erreur suivante :', error);
+  }
+
 module.exports.sequelize = sequelize;
