@@ -1,28 +1,21 @@
-//Quand on utilise mysql2 il n'y a pas besoin d'utiliser mysql ? 
+const Sequelize = require('sequelize');
 
-// const mysql2 = require('mysql2');
 
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'cachewarmer',
-//     password: 'J53wwebart535', 
-//     database : 'users'
-// });
+const sequelize = new Sequelize(
+    process.env.MYSQL_DATABASE,
+    process.env.MYSQL_USERNAME,
+    process.env.MYSQL_PASSWORD,
+    {
+        dialect: 'mysql',
+        host: '51.210.100.11'
+    }
+);
 
-// connection.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connecté à la base de données MySQL!");
-//   });
+try {
+    sequelize.authenticate();  
+    console.log('Connecté à la base de données MySQL!');
+  } catch (error) {
+    console.error('Impossible de se connecter, erreur suivante :', error);
+  }
 
-// connection.query(
-//     'SELECT * FROM cachewarmer',
-//     function(err, results, fields) {
-//         if(err) {
-//             console.log(err)
-//         } else {
-//             console.log('_____________________BDD OKAY_______________________')
-//             console.log('results', results)
-//             console.log('fields', fields)
-//         }
-//     }
-// )
+module.exports = sequelize;

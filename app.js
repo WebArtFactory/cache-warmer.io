@@ -1,6 +1,5 @@
-// const mysql = require('mysql2'); pourquoi on a pas besoin d'utiliser ça ? 
 require('dotenv').config()
-const sequelize = require('./utils/database')
+const sequelize = require('./models/connection')
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -10,7 +9,7 @@ var logger = require('morgan');
 const User = require('./models/users')
 // sequelize.sync() ça ne marche pas pourquoi ? 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var accountRouter = require('./routes/account');
 
 var app = express();
 
@@ -25,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'reactapp/build')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/account', accountRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

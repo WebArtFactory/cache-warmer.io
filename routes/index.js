@@ -11,13 +11,13 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/signup', async (req, res, next) => {
-console.log(req.body)
-// SELECT * FROM `login`
-});
+// router.post('/signup', async (req, res, next) => {
+// console.log(req.body)
+// // SELECT * FROM `login`
+// });
 
-router.get('/signin', async (req, res, next) => {
-console.log(req.query)
-})
+// router.get('/signin', async (req, res, next) => {
+// console.log(req.query)
+// })
 
 module.exports = router;
