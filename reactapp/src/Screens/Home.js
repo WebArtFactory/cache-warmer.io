@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
 import { Table, Progress, Container, Row, Col } from 'reactstrap';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -12,6 +15,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 // import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+
+import env from '../env.json'
 
 // let socket;
 
@@ -36,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Home() {
+function Home(props) {
     const [urlResultList, setUrlResultList] = useState([]);
     const [checked, setChecked] = React.useState({
         "2": true,
@@ -51,6 +56,8 @@ function Home() {
     console.log('url', url)
     let code;
     // let test = [];
+    console.log('page home')
+    const [tokenFromStore, setTokenFromStore] = useState(props.token)
 
     const classes = useStyles();
 
@@ -62,6 +69,8 @@ function Home() {
      * @todo Rajouter l'appel à un paramètre process.env.PORT
      */
     // let socket = socketIOClient("51.210.100.11:3000", {transports: ['websocket']})
+    
+    // let socket = socketIOClient(`http://${env.ip}`, { transports: ['websocket'] })
 
     let socket = socketIOClient("http://192.168.1.190:3000", { transports: ['websocket'] })
     // useEffect(()=>{
@@ -69,6 +78,8 @@ function Home() {
     // }, [])
 
     useEffect(() => {
+
+       
 
         socket.on('urlFromBack', (newUrlResult) => {
 
@@ -95,6 +106,7 @@ function Home() {
         //     }
         // },5000)
         // return () => clearInterval(interval)
+    
 
     }, [urlResultList, robot, socket]);
 
@@ -204,55 +216,56 @@ function Home() {
         )
     })
 
-    return (
-        <div>
-            <Navigation />
-
+    if (tokenFromStore) {
+        return (
             <div>
-                <img className="banniere" src={('../images/bannieref.png')} alt="banniere" />
-            </div>
+                <Navigation />
+
+                <div>
+                    <img className="banniere" src={('../images/bannieref.png')} alt="banniere" />
+                </div>
 
 
-            <Container fluid>
+                <Container fluid>
 
-                <Row>
-                    <Col className='containerText'>
-                        <p className='textBanniere'> Génère automatiquement le cache de votre site web</p>
+                    <Row>
+                        <Col className='containerText'>
+                            <p className='textBanniere'> Génère automatiquement le cache de votre site web</p>
 
-                    </Col>
-                </Row>
-
-
+                        </Col>
+                    </Row>
 
 
-                <Row className='inputsContainer'>
-                    <Col className="textDesc">
-                        <p className='text'>Mon URL à parcourir : </p>
-                    </Col>
-                    <Col>
-                        <div>
-                            {/* <input
+
+
+                    <Row className='inputsContainer'>
+                        <Col className="textDesc">
+                            <p className='text'>Mon URL à parcourir : </p>
+                        </Col>
+                        <Col>
+                            <div>
+                                {/* <input
                                 className="input"
                                 placeholder="Mon URL"
                                 onChange={(e) => setUrl(e.target.value)}
                                 value={url}
                             /> */}
-                            <form className={classes.root} noValidate autoComplete="off">
-                                <TextField id="outlined-basic" label="Mon URL" variant="outlined" className="inputField"
-                                    onChange={(e) => setUrl(e.target.value)} value={url}
-                                />
-                            </form>
-                        </div>
-                    </Col>
-                </Row>
-                <Row className='inputsContainer'>
-                    <Col className="textDesc">
-                        <p className='text'>
-                            Nombre de Robot
-                        </p>
-                    </Col>
-                    <Col>
-                        {/* <form className="inputButton select">
+                                <form className={classes.root} noValidate autoComplete="off">
+                                    <TextField id="outlined-basic" label="Mon URL" variant="outlined" className="inputField"
+                                        onChange={(e) => setUrl(e.target.value)} value={url}
+                                    />
+                                </form>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row className='inputsContainer'>
+                        <Col className="textDesc">
+                            <p className='text'>
+                                Nombre de Robot
+                            </p>
+                        </Col>
+                        <Col>
+                            {/* <form className="inputButton select">
                             <select onChange={(e) => setRobot(e.target.value)} value={robot}>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -261,57 +274,68 @@ function Home() {
                                 <option value="10">10</option>
                             </select>
                         </form> */}
-                        <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Nombre de robot</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                value={robot}
-                                onChange={(e) => setRobot(e.target.value)}
-                                label="Robot"
-                            >
-                                <MenuItem value={robot}>
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value="1">1</MenuItem>
-                                <MenuItem value="2">2</MenuItem>
-                                <MenuItem value="3">3</MenuItem>
-                                <MenuItem value="5">5</MenuItem>
-                                <MenuItem value="10">10</MenuItem>
-                            </Select>
-                        </FormControl>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">Nombre de robot</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    value={robot}
+                                    onChange={(e) => setRobot(e.target.value)}
+                                    label="Robot"
+                                >
+                                    <MenuItem value={robot}>
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value="1">1</MenuItem>
+                                    <MenuItem value="2">2</MenuItem>
+                                    <MenuItem value="3">3</MenuItem>
+                                    <MenuItem value="5">5</MenuItem>
+                                    <MenuItem value="10">10</MenuItem>
+                                </Select>
+                            </FormControl>
 
 
-                    </Col>
-                </Row>
-                <Row className='inputsContainer'>
-                    <Col className="confirmer">
-                        <Button color="primary" size="lg" className="button" block
-                            // className={classes.margin, 'button'}
-                            onClick={() => handleClick()} >
-                            Lancer le cache Crawler
-                        </Button>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                    <Row className='inputsContainer'>
+                        <Col className="confirmer">
+                            <Button color="primary" size="lg" className="button" block
+                                // className={classes.margin, 'button'}
+                                onClick={() => handleClick()} >
+                                Lancer le cache Crawler
+                            </Button>
+                        </Col>
+                    </Row>
 
-            </Container>
+                </Container>
 
-            <div className="table">
-                {getProgressiveBar()}
-            </div>
-            {getCheckBox()}
-            <div>
-                <Table className="table">
-                    {getTable()}
-                    <tbody>
-                        {urlResultItem}
-                    </tbody>
-                </Table>
+                <div className="table">
+                    {getProgressiveBar()}
+                </div>
+                {getCheckBox()}
+                <div>
+                    <Table className="table">
+                        {getTable()}
+                        <tbody>
+                            {urlResultItem}
+                        </tbody>
+                    </Table>
 
-            </div>
+                </div>
 
-        </div >
-    );
+            </div >
+        );
+    } else {
+        return (
+            <Redirect to='/' />
+        )
+    }
 }
 
-export default Home;
+function mapStateToProps(state) {
+    return { token: state.token }
+}
+
+export default connect(
+    mapStateToProps, null
+)(Home)

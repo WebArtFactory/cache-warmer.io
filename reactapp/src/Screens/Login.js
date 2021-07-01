@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
@@ -8,6 +10,9 @@ import Button from '@material-ui/core/Button';
 import EmailIcon from '@material-ui/icons/Email';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
+import Navigation from '../Components/Nav';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -18,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Login() {
+function Login(props) {
 
     //variable d'état pour les inputs et infos à envoyer au back
     const [email, setEmail] = useState("");
@@ -30,6 +35,7 @@ function Login() {
 
     //variable d'état pour vérifier si un utilisateur existe ou pas
     const [userExist, setUserExist] = useState(false);
+    console.log('userexist1', userExist)
 
     //variable d'états pour les erreurs
     const [errorsListSignUp, setErrorsListSignUp] = useState([]);
@@ -46,7 +52,7 @@ function Login() {
 
     //traitement de l'information pour un utilisateur qui a deja un compte
     const handleClickSignIn = async () => {
-        console.log('click sign in okay')
+        // console.log('click sign in okay')
 
         if (validate(email) === false) {
             setErrorsListSignIn(["Le format de l'adresse mail n'est pas valide"])
@@ -58,9 +64,10 @@ function Login() {
             })
 
             const body = await data.json()
-            console.log("body", body)
+            // console.log("body", body)
 
             if (body.result === true) {
+                props.addToken(body.token)            
                 setUserExist(true)
             } else {
                 setErrorsListSignIn(body.error)
@@ -70,7 +77,7 @@ function Login() {
 
     //traitement de l'information pour un utilisateur qui créer un compte
     const handleClickSignUp = async () => {
-        console.log('click signup okay')
+        // console.log('click signup okay')
 
         if (validate(newEmail) === false) {
             setErrorsListSignUp(["Le format de l'adresse mail n'est pas valide"])
@@ -82,21 +89,27 @@ function Login() {
             })
 
             const body = await data.json()
-            console.log("body", body)
+            console.log('bodyresult1', body.result)
 
             if (body.result === true) {
+                // console.log('bodyresult1', body.result)
+                props.addToken(body.token)
                 setUserExist(true)
+                console.log('userexist2', userExist)
+
             } else {
                 setErrorsListSignUp(body.error)
             }
+            console.log('userexist2bis', userExist)
         }
     }
 
     //redirection sur la page home si le backend renvoit un result = true
+    console.log('userexist3', userExist)
+
     if (userExist) {
-        return (
-            <Redirect to='/home' />
-        )
+        console.log('userexist4', userExist)
+        return <Redirect to='/home' />
     }
 
     //affichage des erreurs pour signup
@@ -120,6 +133,9 @@ function Login() {
 
     return (
         <Container fluid>
+            <Row>
+                <Navigation />
+            </Row>
             <Row>
                 <Col>
                     <div>
@@ -246,4 +262,12 @@ function Login() {
     )
 }
 
-export default Login;
+function mapDispatchToProps(dispatch) {
+    return {
+        addToken: function (token) {
+            dispatch({ type: "addToken", token: token });
+        },
+    };
+}
+
+export default connect(null, mapDispatchToProps)(Login);
